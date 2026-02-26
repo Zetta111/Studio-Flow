@@ -1,0 +1,280 @@
+'use client'
+
+import { useEffect, useState, useCallback } from 'react'
+import { createClient } from '@/lib/supabase-client'
+import { useAuth } from '@/contexts/AuthContext'
+import ClassModal from './ClassModal'
+
+export type Class = {
+  id: string
+  studio_id: string
+  name: string
+  description: string | null
+  instructor_name: string | null
+  day_of_week: number // 0 = Sunday, 1 = Monday ... 6 = Saturday
+  start_time: string  // e.g. "09:00:00"
+  duration_minutes: number | null
+  is_active: boolean
+  created_at: string
+}
+
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+function formatTime(time: string) {
+  const [h, m] = time.split(':').map(Number)
+  const ampm = h >= 12 ? 'PM' : 'AM'
+  const hour = h % 12 || 12
+  return `${hour}:${m.toString().padStart(2, '0')} ${ampm}`
+}
+
+export default function ClassesPage() {
+  const { user } = useAuth()
+  const supabase = createClient()
+
+  const [classes, setClasses] = useState<Class[]>([])
+  const [loading, setLoading] = useState(true)
+  const [studioId, setStudioId] = useState<string | null>(null)
+
+  const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('active')
+  const [modalOpen, setModalOpen] = useState(false)
+  const [editingClass, setEditingClass] = useState<Class | null>(null)
+  const [deletingClass, setDeletingClass] = useState<Class | null>(null)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+
+  useEffect(() => {
+    async function getStudio() {
+      if (!user) return
+      const { data } = await supabase
+        .from('studio_users')
+        .select('studio_id')
+        .eq('auth_user_id', user.id)
+        .single()
+      if (data) setStudioId(data.studio_id)
+    }
+    getStudio()
+  }, [user, supabase])
+
+  const fetchClasses = useCallback(async () => {
+    if (!studioId) return
+    setLoading(true)
+    try {
+      let query = supabase
+        .from('classes')
+        .select('*')
+        .eq('studio_id', studioId)
+        .order('day_of_week', { ascending: true })
+        .order('start_time', { ascending: true })
+
+      if (filter !== 'all') {
+        query = query.eq('is_active', filter === 'active')
+      }
+
+      const { data, error } = await query
+      if (error) throw error
+      setClasses(data || [])
+    } catch (error) {
+      console.error('Error fetching classes:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [studioId, filter, supabase])
+
+  useEffect(() => {
+    fetchClasses()
+  }, [fetchClasses])
+
+  const handleDelete = async () => {
+    if (!deletingClass) return
+    setDeleteLoading(true)
+    try {
+      const { error } = await supabase
+        .from('classes')
+        .delete()
+        .eq('id', deletingClass.id)
+      if (error) throw error
+      setDeletingClass(null)
+      fetchClasses()
+    } catch (error) {
+      console.error('Error deleting class:', error)
+    } finally {
+      setDeleteLoading(false)
+    }
+  }
+
+  const toggleActive = async (cls: Class) => {
+    try {
+      const { error } = await supabase
+        .from('classes')
+        .update({ is_active: !cls.is_active })
+        .eq('id', cls.id)
+      if (error) throw error
+      fetchClasses()
+    } catch (error) {
+      console.error('Error toggling class:', error)
+    }
+  }
+
+  // Group classes by day of week
+  const grouped = DAYS.reduce((acc, day, idx) => {
+    const dayClasses = classes.filter((c) => c.day_of_week === idx)
+    if (dayClasses.length > 0) acc[day] = dayClasses
+    return acc
+  }, {} as Record<string, Class[]>)
+
+  return (
+    <div className="px-4 sm:px-0">
+      {/* Header */}
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Classes</h2>
+          <p className="mt-1 text-sm text-gray-500">
+            {classes.length} class{classes.length !== 1 ? 'es' : ''}
+            {filter !== 'all' ? ` (${filter})` : ''}
+          </p>
+        </div>
+        <button
+          onClick={() => { setEditingClass(null); setModalOpen(true) }}
+          className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition"
+        >
+          + Add Class
+        </button>
+      </div>
+
+      {/* Filter */}
+      <div className="mb-4 flex gap-2">
+        {(['active', 'all', 'inactive'] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition capitalize ${
+              filter === f
+                ? 'bg-indigo-600 text-white'
+                : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50'
+            }`}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      {loading ? (
+        <div className="p-8 text-center text-gray-500 text-sm">Loading classes...</div>
+      ) : classes.length === 0 ? (
+        <div className="bg-white shadow rounded-lg p-8 text-center text-gray-500 text-sm">
+          {filter !== 'all'
+            ? `No ${filter} classes found.`
+            : 'No classes yet. Add your first class!'}
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {Object.entries(grouped).map(([day, dayClasses]) => (
+            <div key={day}>
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                {day}
+              </h3>
+              <div className="bg-white shadow rounded-lg overflow-hidden divide-y divide-gray-100">
+                {dayClasses.map((cls) => (
+                  <div
+                    key={cls.id}
+                    className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition"
+                  >
+                    {/* Time */}
+                    <div className="w-20 shrink-0 text-sm font-medium text-gray-700">
+                      {formatTime(cls.start_time)}
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-semibold text-gray-900">{cls.name}</span>
+                        <span
+                          className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${
+                            cls.is_active
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-500'
+                          }`}
+                        >
+                          {cls.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                      </div>
+                      <div className="mt-0.5 text-xs text-gray-500 flex gap-3 flex-wrap">
+                        {cls.instructor_name && <span>👤 {cls.instructor_name}</span>}
+                        {cls.duration_minutes && <span>⏱ {cls.duration_minutes} min</span>}
+                        {cls.description && (
+                          <span className="truncate max-w-xs">{cls.description}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-3 shrink-0">
+                      <button
+                        onClick={() => toggleActive(cls)}
+                        className="text-xs text-gray-500 hover:text-indigo-600 font-medium transition"
+                      >
+                        {cls.is_active ? 'Deactivate' : 'Activate'}
+                      </button>
+                      <button
+                        onClick={() => { setEditingClass(cls); setModalOpen(true) }}
+                        className="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => setDeletingClass(cls)}
+                        className="text-sm text-red-500 hover:text-red-700 font-medium transition"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add/Edit Modal */}
+      {modalOpen && (
+        <ClassModal
+          studioId={studioId!}
+          cls={editingClass}
+          onClose={() => setModalOpen(false)}
+          onSaved={() => { setModalOpen(false); fetchClasses() }}
+        />
+      )}
+
+      {/* Delete Confirmation */}
+      {deletingClass && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-sm p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Class</h3>
+            <p className="text-sm text-gray-500 mb-6">
+              Are you sure you want to delete{' '}
+              <span className="font-medium text-gray-800">{deletingClass.name}</span>? This cannot
+              be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeletingClass(null)}
+                disabled={deleteLoading}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleteLoading}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50 transition"
+              >
+                {deleteLoading ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
