@@ -102,20 +102,23 @@ export default function ClassModal({ studioId, cls, onClose, onSaved }: Props) {
     }
   }
 
+  const inputClass = "w-full bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+  const labelClass = "block text-sm font-medium text-slate-300 mb-1"
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700">
+          <h2 className="text-lg font-semibold text-white">
             {isEditing ? 'Edit Class' : 'Add New Class'}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-xl font-light leading-none transition"
+            className="text-slate-500 hover:text-slate-300 text-xl font-light leading-none transition"
             aria-label="Close"
           >
             ×
@@ -125,45 +128,45 @@ export default function ClassModal({ studioId, cls, onClose, onSaved }: Props) {
         {/* Form */}
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-md px-3 py-2">
+            <div className="bg-red-900/30 border border-red-700 text-red-300 text-sm rounded-md px-3 py-2">
               {error}
             </div>
           )}
 
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Class Name <span className="text-red-500">*</span>
+            <label className={labelClass}>
+              Class Name <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => set('name', e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={inputClass}
               placeholder="e.g. Morning Pilates"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className={labelClass}>Description</label>
             <textarea
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
               rows={2}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              className={`${inputClass} resize-none`}
               placeholder="Optional class description..."
             />
           </div>
 
           {/* Instructor */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Instructor Name</label>
+            <label className={labelClass}>Instructor Name</label>
             <input
               type="text"
               value={form.instructor_name}
               onChange={(e) => set('instructor_name', e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={inputClass}
               placeholder="e.g. Sarah Johnson"
             />
           </div>
@@ -171,11 +174,11 @@ export default function ClassModal({ studioId, cls, onClose, onSaved }: Props) {
           {/* Day + Time */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Day of Week</label>
+              <label className={labelClass}>Day of Week</label>
               <select
                 value={form.day_of_week}
                 onChange={(e) => set('day_of_week', e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={inputClass}
               >
                 {DAYS.map((day, idx) => (
                   <option key={day} value={idx}>{day}</option>
@@ -183,12 +186,12 @@ export default function ClassModal({ studioId, cls, onClose, onSaved }: Props) {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+              <label className={labelClass}>Start Time</label>
               <input
                 type="time"
                 value={form.start_time}
                 onChange={(e) => set('start_time', e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={inputClass}
               />
             </div>
           </div>
@@ -196,24 +199,22 @@ export default function ClassModal({ studioId, cls, onClose, onSaved }: Props) {
           {/* Duration + Status */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Duration (minutes)
-              </label>
+              <label className={labelClass}>Duration (minutes)</label>
               <input
                 type="number"
                 min="1"
                 value={form.duration_minutes}
                 onChange={(e) => set('duration_minutes', e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={inputClass}
                 placeholder="60"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label className={labelClass}>Status</label>
               <select
                 value={form.is_active ? 'active' : 'inactive'}
                 onChange={(e) => set('is_active', e.target.value === 'active')}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={inputClass}
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
@@ -227,14 +228,14 @@ export default function ClassModal({ studioId, cls, onClose, onSaved }: Props) {
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
+              className="px-4 py-2 text-sm font-medium text-slate-300 bg-slate-700 border border-slate-600 rounded-md hover:bg-slate-600 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:opacity-50 transition"
+              className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 disabled:opacity-50 transition"
             >
               {saving ? 'Saving...' : isEditing ? 'Save Changes' : 'Add Class'}
             </button>

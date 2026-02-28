@@ -246,25 +246,25 @@ export default function AttendancePage() {
     <div className="px-4 sm:px-0">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Attendance</h2>
-        <p className="mt-1 text-sm text-gray-500">Mark attendance for scheduled classes</p>
+        <h2 className="text-2xl font-bold text-white">Attendance</h2>
+        <p className="mt-1 text-sm text-slate-400">Mark attendance for scheduled classes</p>
       </div>
 
       {/* Date Picker */}
-      <div className="bg-white shadow rounded-lg p-4 mb-6 flex flex-col sm:flex-row items-center gap-3">
+      <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 mb-6 flex flex-col sm:flex-row items-center gap-3">
         <div className="flex items-center gap-2">
           <button
             onClick={goToPrevDay}
-            className="p-2 rounded-md hover:bg-gray-100 text-gray-600 transition"
+            className="p-2 rounded-md hover:bg-slate-700 text-slate-400 transition"
           >
             ‹
           </button>
           <div className="text-center min-w-[180px]">
-            <p className="text-sm font-semibold text-gray-900">{formatDate(selectedDate)}</p>
+            <p className="text-sm font-semibold text-white">{formatDate(selectedDate)}</p>
           </div>
           <button
             onClick={goToNextDay}
-            className="p-2 rounded-md hover:bg-gray-100 text-gray-600 transition"
+            className="p-2 rounded-md hover:bg-slate-700 text-slate-400 transition"
           >
             ›
           </button>
@@ -272,7 +272,7 @@ export default function AttendancePage() {
         {!isToday && (
           <button
             onClick={goToToday}
-            className="text-xs font-medium text-indigo-600 hover:text-indigo-800 transition"
+            className="text-xs font-medium text-purple-400 hover:text-purple-300 transition"
           >
             Back to today
           </button>
@@ -282,7 +282,7 @@ export default function AttendancePage() {
             type="date"
             value={toISODate(selectedDate)}
             onChange={(e) => setSelectedDate(new Date(e.target.value + 'T12:00:00'))}
-            className="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="bg-slate-700 border border-slate-600 text-white rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
         </div>
       </div>
@@ -290,32 +290,32 @@ export default function AttendancePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Sessions List */}
         <div>
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+          <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">
             Classes
           </h3>
-          <div className="bg-white shadow rounded-lg overflow-hidden">
+          <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
             {loadingSessions ? (
-              <div className="p-6 text-center text-sm text-gray-500">Loading classes...</div>
+              <div className="p-6 text-center text-sm text-slate-400">Loading classes...</div>
             ) : sessions.length === 0 ? (
-              <div className="p-6 text-center text-sm text-gray-500">
+              <div className="p-6 text-center text-sm text-slate-400">
                 No classes scheduled for this day.
               </div>
             ) : (
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-slate-700">
                 {sessions.map((session) => (
                   <button
                     key={session.id}
                     onClick={() => setSelectedSession(session)}
-                    className={`w-full text-left px-4 py-3 hover:bg-indigo-50 transition ${
+                    className={`w-full text-left px-4 py-3 hover:bg-slate-700/50 transition ${
                       selectedSession?.id === session.id
-                        ? 'bg-indigo-50 border-l-4 border-indigo-500'
+                        ? 'bg-purple-500/10 border-l-4 border-purple-500'
                         : ''
                     }`}
                   >
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-sm font-semibold text-white">
                       {session.classes.name}
                     </p>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs text-slate-400 mt-0.5">
                       {formatTime(session.start_time)}
                       {session.classes.duration_minutes && ` · ${session.classes.duration_minutes} min`}
                       {session.classes.instructor_name && ` · ${session.classes.instructor_name}`}
@@ -330,25 +330,25 @@ export default function AttendancePage() {
         {/* Attendance Panel */}
         <div className="lg:col-span-2">
           {!selectedSession ? (
-            <div className="bg-white shadow rounded-lg p-8 text-center text-gray-500 text-sm h-full flex items-center justify-center">
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-8 text-center text-slate-400 text-sm h-full flex items-center justify-center">
               ← Select a class to take attendance
             </div>
           ) : (
             <>
               {/* Session Header */}
-              <div className="bg-white shadow rounded-lg px-5 py-4 mb-4 flex items-center justify-between">
+              <div className="bg-slate-800 border border-slate-700 rounded-lg px-5 py-4 mb-4 flex items-center justify-between">
                 <div>
-                  <h3 className="text-base font-semibold text-gray-900">
+                  <h3 className="text-base font-semibold text-white">
                     {selectedSession.classes.name}
                   </h3>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs text-slate-400 mt-0.5">
                     {formatDate(selectedDate)} · {formatTime(selectedSession.start_time)}
                   </p>
                 </div>
                 {!loadingAttendance && (
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-indigo-600">{presentCount}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-2xl font-bold text-purple-400">{presentCount}</p>
+                    <p className="text-xs text-slate-400">
                       of {members.length} present
                     </p>
                   </div>
@@ -356,15 +356,15 @@ export default function AttendancePage() {
               </div>
 
               {/* Member List */}
-              <div className="bg-white shadow rounded-lg overflow-hidden">
+              <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
                 {loadingAttendance ? (
-                  <div className="p-6 text-center text-sm text-gray-500">Loading members...</div>
+                  <div className="p-6 text-center text-sm text-slate-400">Loading members...</div>
                 ) : members.length === 0 ? (
-                  <div className="p-6 text-center text-sm text-gray-500">
+                  <div className="p-6 text-center text-sm text-slate-400">
                     No active members found. Add members first.
                   </div>
                 ) : (
-                  <div className="divide-y divide-gray-100">
+                  <div className="divide-y divide-slate-700">
                     {members.map((member) => {
                       const record = attendance[member.id]
                       const isPresent = record?.status === 'present'
@@ -373,19 +373,19 @@ export default function AttendancePage() {
                       return (
                         <div
                           key={member.id}
-                          className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition"
+                          className="flex items-center justify-between px-5 py-3 hover:bg-slate-700/50 transition"
                         >
                           <div className="flex items-center gap-3">
                             <div
                               className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
                                 isPresent
-                                  ? 'bg-green-100 text-green-700'
-                                  : 'bg-gray-100 text-gray-500'
+                                  ? 'bg-green-500/20 text-green-400'
+                                  : 'bg-slate-700 text-slate-400'
                               }`}
                             >
                               {member.first_name[0]}{member.last_name[0]}
                             </div>
-                            <span className="text-sm font-medium text-gray-900">
+                            <span className="text-sm font-medium text-white">
                               {member.first_name} {member.last_name}
                             </span>
                           </div>
@@ -394,8 +394,8 @@ export default function AttendancePage() {
                             disabled={isLoading}
                             className={`px-3 py-1.5 text-xs font-semibold rounded-full transition disabled:opacity-50 ${
                               isPresent
-                                ? 'bg-green-100 text-green-700 hover:bg-red-100 hover:text-red-700'
-                                : 'bg-gray-100 text-gray-500 hover:bg-green-100 hover:text-green-700'
+                                ? 'bg-green-500/20 text-green-400 hover:bg-red-500/20 hover:text-red-400'
+                                : 'bg-slate-700 text-slate-400 hover:bg-green-500/20 hover:text-green-400'
                             }`}
                           >
                             {isLoading ? '...' : isPresent ? 'Present ✓' : 'Absent'}

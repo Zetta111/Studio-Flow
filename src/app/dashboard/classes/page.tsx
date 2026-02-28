@@ -4,19 +4,10 @@ import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase-client'
 import { useAuth } from '@/contexts/AuthContext'
 import ClassModal from './ClassModal'
+import RosterPanel from './RosterPanel'
+import type { Class } from './types'
 
-export type Class = {
-  id: string
-  studio_id: string
-  name: string
-  description: string | null
-  instructor_name: string | null
-  day_of_week: number // 0 = Sunday, 1 = Monday ... 6 = Saturday
-  start_time: string  // e.g. "09:00:00"
-  duration_minutes: number | null
-  is_active: boolean
-  created_at: string
-}
+export type { Class }
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
@@ -40,6 +31,7 @@ export default function ClassesPage() {
   const [editingClass, setEditingClass] = useState<Class | null>(null)
   const [deletingClass, setDeletingClass] = useState<Class | null>(null)
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [rosterClass, setRosterClass] = useState<Class | null>(null)
 
   useEffect(() => {
     async function getStudio() {
@@ -52,7 +44,8 @@ export default function ClassesPage() {
       if (data) setStudioId(data.studio_id)
     }
     getStudio()
-  }, [user, supabase])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
 
   const fetchClasses = useCallback(async () => {
     if (!studioId) return
@@ -77,7 +70,8 @@ export default function ClassesPage() {
     } finally {
       setLoading(false)
     }
-  }, [studioId, filter, supabase])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studioId, filter])
 
   useEffect(() => {
     fetchClasses()
@@ -126,15 +120,15 @@ export default function ClassesPage() {
       {/* Header */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Classes</h2>
-          <p className="mt-1 text-sm text-gray-500">
+          <h2 className="text-2xl font-bold text-white">Classes</h2>
+          <p className="mt-1 text-sm text-slate-400">
             {classes.length} class{classes.length !== 1 ? 'es' : ''}
             {filter !== 'all' ? ` (${filter})` : ''}
           </p>
         </div>
         <button
           onClick={() => { setEditingClass(null); setModalOpen(true) }}
-          className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition"
+          className="inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition"
         >
           + Add Class
         </button>
@@ -148,8 +142,8 @@ export default function ClassesPage() {
             onClick={() => setFilter(f)}
             className={`px-3 py-1.5 text-sm font-medium rounded-md transition capitalize ${
               filter === f
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50'
+                ? 'bg-purple-600 text-white'
+                : 'bg-slate-800 text-slate-400 border border-slate-600 hover:bg-slate-700'
             }`}
           >
             {f}
@@ -159,9 +153,9 @@ export default function ClassesPage() {
 
       {/* Content */}
       {loading ? (
-        <div className="p-8 text-center text-gray-500 text-sm">Loading classes...</div>
+        <div className="p-8 text-center text-slate-400 text-sm">Loading classes...</div>
       ) : classes.length === 0 ? (
-        <div className="bg-white shadow rounded-lg p-8 text-center text-gray-500 text-sm">
+        <div className="bg-slate-800 border border-slate-700 rounded-lg p-8 text-center text-slate-400 text-sm">
           {filter !== 'all'
             ? `No ${filter} classes found.`
             : 'No classes yet. Add your first class!'}
@@ -170,35 +164,35 @@ export default function ClassesPage() {
         <div className="space-y-6">
           {Object.entries(grouped).map(([day, dayClasses]) => (
             <div key={day}>
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
                 {day}
               </h3>
-              <div className="bg-white shadow rounded-lg overflow-hidden divide-y divide-gray-100">
+              <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden divide-y divide-slate-700">
                 {dayClasses.map((cls) => (
                   <div
                     key={cls.id}
-                    className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition"
+                    className="flex items-center gap-4 px-5 py-4 hover:bg-slate-700/50 transition"
                   >
                     {/* Time */}
-                    <div className="w-20 shrink-0 text-sm font-medium text-gray-700">
+                    <div className="w-20 shrink-0 text-sm font-medium text-slate-300">
                       {formatTime(cls.start_time)}
                     </div>
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-semibold text-gray-900">{cls.name}</span>
+                        <span className="text-sm font-semibold text-white">{cls.name}</span>
                         <span
                           className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${
                             cls.is_active
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-500'
+                              ? 'bg-green-500/20 text-green-400'
+                              : 'bg-slate-700 text-slate-400'
                           }`}
                         >
                           {cls.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </div>
-                      <div className="mt-0.5 text-xs text-gray-500 flex gap-3 flex-wrap">
+                      <div className="mt-0.5 text-xs text-slate-500 flex gap-3 flex-wrap">
                         {cls.instructor_name && <span>👤 {cls.instructor_name}</span>}
                         {cls.duration_minutes && <span>⏱ {cls.duration_minutes} min</span>}
                         {cls.description && (
@@ -208,22 +202,28 @@ export default function ClassesPage() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end">
+                      <button
+                        onClick={() => setRosterClass(cls)}
+                        className="text-xs font-medium text-purple-400 hover:text-purple-300 transition"
+                      >
+                        Roster
+                      </button>
                       <button
                         onClick={() => toggleActive(cls)}
-                        className="text-xs text-gray-500 hover:text-indigo-600 font-medium transition"
+                        className="text-xs text-slate-400 hover:text-purple-400 font-medium transition"
                       >
                         {cls.is_active ? 'Deactivate' : 'Activate'}
                       </button>
                       <button
                         onClick={() => { setEditingClass(cls); setModalOpen(true) }}
-                        className="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition"
+                        className="text-sm text-purple-400 hover:text-purple-300 font-medium transition"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => setDeletingClass(cls)}
-                        className="text-sm text-red-500 hover:text-red-700 font-medium transition"
+                        className="text-sm text-red-400 hover:text-red-300 font-medium transition"
                       >
                         Delete
                       </button>
@@ -246,21 +246,30 @@ export default function ClassesPage() {
         />
       )}
 
+      {/* Roster Panel */}
+      {rosterClass && studioId && (
+        <RosterPanel
+          cls={rosterClass}
+          studioId={studioId}
+          onClose={() => setRosterClass(null)}
+        />
+      )}
+
       {/* Delete Confirmation */}
       {deletingClass && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Class</h3>
-            <p className="text-sm text-gray-500 mb-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+          <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl w-full max-w-sm p-6">
+            <h3 className="text-lg font-semibold text-white mb-2">Delete Class</h3>
+            <p className="text-sm text-slate-400 mb-6">
               Are you sure you want to delete{' '}
-              <span className="font-medium text-gray-800">{deletingClass.name}</span>? This cannot
+              <span className="font-medium text-white">{deletingClass.name}</span>? This cannot
               be undone.
             </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setDeletingClass(null)}
                 disabled={deleteLoading}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
+                className="px-4 py-2 text-sm font-medium text-slate-300 bg-slate-700 border border-slate-600 rounded-md hover:bg-slate-600 transition"
               >
                 Cancel
               </button>

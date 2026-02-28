@@ -69,7 +69,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="px-4 sm:px-0">
-        <p className="text-gray-500">Loading dashboard...</p>
+        <p className="text-slate-400">Loading dashboard...</p>
       </div>
     )
   }
@@ -77,40 +77,49 @@ export default function DashboardPage() {
   return (
     <div className="px-4 sm:px-0">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">{stats.studioName}</h2>
-        <p className="mt-1 text-sm text-gray-500">Welcome back! Here's your studio overview.</p>
+        <h2 className="text-2xl font-bold text-white">{stats.studioName}</h2>
+        <p className="mt-1 text-sm text-slate-400">Welcome back! Here's your studio overview.</p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-slate-800 overflow-hidden rounded-lg border border-slate-700">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-1">
-                <dt className="text-sm font-medium text-gray-500 truncate">Total Members</dt>
-                <dd className="mt-1 text-3xl font-semibold text-gray-900">{stats.totalMembers}</dd>
+                <dt className="text-sm font-medium text-slate-400 truncate">Total Members</dt>
+                <dd className="mt-1 text-3xl font-semibold text-white">{stats.totalMembers}</dd>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 text-lg">
+                👥
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-slate-800 overflow-hidden rounded-lg border border-slate-700">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-1">
-                <dt className="text-sm font-medium text-gray-500 truncate">Active Members</dt>
-                <dd className="mt-1 text-3xl font-semibold text-gray-900">{stats.activeMembers}</dd>
+                <dt className="text-sm font-medium text-slate-400 truncate">Active Members</dt>
+                <dd className="mt-1 text-3xl font-semibold text-white">{stats.activeMembers}</dd>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-lg">
+                ✓
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-slate-800 overflow-hidden rounded-lg border border-slate-700">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-1">
-                <dt className="text-sm font-medium text-gray-500 truncate">Active Classes</dt>
-                <dd className="mt-1 text-3xl font-semibold text-gray-900">{stats.totalClasses}</dd>
+                <dt className="text-sm font-medium text-slate-400 truncate">Active Classes</dt>
+                <dd className="mt-1 text-3xl font-semibold text-white">{stats.totalClasses}</dd>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-400 text-lg">
+                🎯
               </div>
             </div>
           </div>
@@ -118,22 +127,22 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-8 bg-white shadow rounded-lg p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+      <div className="mt-8 bg-slate-800 rounded-lg border border-slate-700 p-6">
+        <h3 className="text-lg font-medium text-white mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <a
             href="/dashboard/members"
-            className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-500 hover:bg-indigo-50 transition"
+            className="border-2 border-dashed border-slate-600 rounded-lg p-6 text-center hover:border-purple-500 hover:bg-purple-500/10 transition"
           >
-            <h4 className="text-sm font-medium text-gray-900">Add New Member</h4>
-            <p className="mt-1 text-sm text-gray-500">Register a new student</p>
+            <h4 className="text-sm font-medium text-white">Add New Member</h4>
+            <p className="mt-1 text-sm text-slate-400">Register a new student</p>
           </a>
           <a
             href="/dashboard/attendance"
-            className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-500 hover:bg-indigo-50 transition"
+            className="border-2 border-dashed border-slate-600 rounded-lg p-6 text-center hover:border-purple-500 hover:bg-purple-500/10 transition"
           >
-            <h4 className="text-sm font-medium text-gray-900">Mark Attendance</h4>
-            <p className="mt-1 text-sm text-gray-500">Check in students for today's classes</p>
+            <h4 className="text-sm font-medium text-white">Mark Attendance</h4>
+            <p className="mt-1 text-sm text-slate-400">Check in students for today's classes</p>
           </a>
         </div>
       </div>

@@ -104,20 +104,23 @@ export default function MemberModal({ studioId, member, onClose, onSaved }: Prop
     }
   }
 
+  const inputClass = "w-full bg-slate-700 border border-slate-600 text-white placeholder:text-slate-500 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+  const labelClass = "block text-sm font-medium text-slate-300 mb-1"
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700">
+          <h2 className="text-lg font-semibold text-white">
             {isEditing ? 'Edit Member' : 'Add New Member'}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-xl font-light leading-none transition"
+            className="text-slate-500 hover:text-slate-300 text-xl font-light leading-none transition"
             aria-label="Close"
           >
             ×
@@ -127,7 +130,7 @@ export default function MemberModal({ studioId, member, onClose, onSaved }: Prop
         {/* Form */}
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-md px-3 py-2">
+            <div className="bg-red-900/30 border border-red-700 text-red-300 text-sm rounded-md px-3 py-2">
               {error}
             </div>
           )}
@@ -135,26 +138,26 @@ export default function MemberModal({ studioId, member, onClose, onSaved }: Prop
           {/* Name row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                First Name <span className="text-red-500">*</span>
+              <label className={labelClass}>
+                First Name <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
                 value={form.first_name}
                 onChange={(e) => set('first_name', e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={inputClass}
                 placeholder="Jane"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Last Name <span className="text-red-500">*</span>
+              <label className={labelClass}>
+                Last Name <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
                 value={form.last_name}
                 onChange={(e) => set('last_name', e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={inputClass}
                 placeholder="Smith"
               />
             </div>
@@ -162,26 +165,26 @@ export default function MemberModal({ studioId, member, onClose, onSaved }: Prop
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email <span className="text-red-500">*</span>
+            <label className={labelClass}>
+              Email <span className="text-red-400">*</span>
             </label>
             <input
               type="email"
               value={form.email}
               onChange={(e) => set('email', e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={inputClass}
               placeholder="jane@example.com"
             />
           </div>
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+            <label className={labelClass}>Phone</label>
             <input
               type="tel"
               value={form.phone}
               onChange={(e) => set('phone', e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={inputClass}
               placeholder="(555) 000-0000"
             />
           </div>
@@ -189,27 +192,25 @@ export default function MemberModal({ studioId, member, onClose, onSaved }: Prop
           {/* Status + Monthly Rate */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label className={labelClass}>Status</label>
               <select
                 value={form.status}
                 onChange={(e) => set('status', e.target.value as 'active' | 'inactive')}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={inputClass}
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Monthly Rate ($)
-              </label>
+              <label className={labelClass}>Monthly Rate ($)</label>
               <input
                 type="number"
                 min="0"
                 step="0.01"
                 value={form.monthly_rate}
                 onChange={(e) => set('monthly_rate', e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={inputClass}
                 placeholder="150"
               />
             </div>
@@ -217,23 +218,23 @@ export default function MemberModal({ studioId, member, onClose, onSaved }: Prop
 
           {/* Join Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Join Date</label>
+            <label className={labelClass}>Join Date</label>
             <input
               type="date"
               value={form.join_date}
               onChange={(e) => set('join_date', e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={inputClass}
             />
           </div>
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+            <label className={labelClass}>Notes</label>
             <textarea
               value={form.notes}
               onChange={(e) => set('notes', e.target.value)}
               rows={3}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              className={`${inputClass} resize-none`}
               placeholder="Any notes about this member..."
             />
           </div>
@@ -244,14 +245,14 @@ export default function MemberModal({ studioId, member, onClose, onSaved }: Prop
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
+              className="px-4 py-2 text-sm font-medium text-slate-300 bg-slate-700 border border-slate-600 rounded-md hover:bg-slate-600 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:opacity-50 transition"
+              className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 disabled:opacity-50 transition"
             >
               {saving ? 'Saving...' : isEditing ? 'Save Changes' : 'Add Member'}
             </button>

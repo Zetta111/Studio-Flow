@@ -21,8 +21,8 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <p className="text-slate-400">Loading...</p>
       </div>
     )
   }
@@ -37,47 +37,47 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-slate-900">
       {/* Top Navigation */}
-      <nav className="bg-white shadow-sm">
+      <nav className="bg-slate-900 border-b border-slate-700/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-indigo-600">StudioFlow</h1>
+                <h1 className="text-xl font-bold text-purple-400">StudioFlow</h1>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 <Link
                   href="/dashboard"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  className="border-transparent text-slate-400 hover:border-slate-500 hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition"
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/dashboard/members"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  className="border-transparent text-slate-400 hover:border-slate-500 hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition"
                 >
                   Members
                 </Link>
                 <Link
                   href="/dashboard/classes"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  className="border-transparent text-slate-400 hover:border-slate-500 hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition"
                 >
                   Classes
                 </Link>
                 <Link
                   href="/dashboard/attendance"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  className="border-transparent text-slate-400 hover:border-slate-500 hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition"
                 >
                   Attendance
                 </Link>
               </div>
             </div>
             <div className="flex items-center">
-              <span className="text-sm text-gray-500 mr-4">{user.email}</span>
+              <span className="text-sm text-slate-400 mr-4">{user.email}</span>
               <button
                 onClick={handleSignOut}
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="bg-slate-800 py-2 px-4 border border-slate-600 rounded-md shadow-sm text-sm font-medium text-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-purple-500 transition"
               >
                 Sign out
               </button>
