@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase-client'
 export default function SignupPage() {
   const router = useRouter()
   const supabase = createClient()
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -24,44 +24,30 @@ export default function SignupPage() {
     setLoading(true)
 
     try {
-      // 1. Create auth user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // 1. Call server API to create user + studio (bypasses RLS)
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          studioName: formData.studioName,
+          phone: formData.phone,
+        }),
+      })
+
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
+
+      // 2. Sign in client-side after account is created
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       })
 
-      if (authError) throw authError
+      if (signInError) throw signInError
 
-      if (authData.user) {
-        // 2. Create studio
-        const { data: studio, error: studioError } = await supabase
-          .from('studios')
-          .insert({
-            name: formData.studioName,
-            email: formData.email,
-            phone: formData.phone || null,
-            trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-          })
-          .select()
-          .single()
-
-        if (studioError) throw studioError
-
-        // 3. Link user to studio
-        const { error: userError } = await supabase
-          .from('studio_users')
-          .insert({
-            studio_id: studio.id,
-            email: formData.email,
-            role: 'owner',
-            auth_user_id: authData.user.id,
-          })
-
-        if (userError) throw userError
-
-        // Success - redirect to dashboard
-        router.push('/dashboard')
-      }
+      router.push('/dashboard')
     } catch (err: any) {
       setError(err.message || 'An error occurred during signup')
     } finally {
@@ -80,7 +66,7 @@ export default function SignupPage() {
             Start your 14-day free trial
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSignup}>
           {error && (
             <div className="rounded-md bg-red-50 p-4">
