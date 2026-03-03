@@ -8,6 +8,8 @@ const supabaseAdmin = createClient(
 )
 
 export async function POST(req: NextRequest) {
+  let userId: string | null = null
+
   try {
     const { email, password, studioName, phone } = await req.json()
 
@@ -19,11 +21,11 @@ export async function POST(req: NextRequest) {
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
-      email_confirm: true, // auto-confirm so they can log in immediately
+      email_confirm: true,
     })
 
     if (authError) throw authError
-    const userId = authData.user.id
+    userId = authData.user.id
 
     // 2. Create studio with trial
     const { data: studio, error: studioError } = await supabaseAdmin
@@ -53,6 +55,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (err: any) {
+    // Roll back the auth user if studio/studio_users creation failed
+    if (userId) {
+      await supabaseAdmin.auth.admin.deleteUser(userId)
+    }
     console.error('Signup error:', err)
     return NextResponse.json({ error: err.message || 'Signup failed' }, { status: 500 })
   }
