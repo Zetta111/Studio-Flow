@@ -39,7 +39,8 @@ export default function SignupPage() {
           .insert({
             name: formData.studioName,
             email: formData.email,
-            phone: formData.phone,
+            phone: formData.phone || null,
+            trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
           })
           .select()
           .single()
